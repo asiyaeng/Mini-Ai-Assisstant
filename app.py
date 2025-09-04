@@ -18,15 +18,29 @@ def load_model():
 generator = load_model()
 
 # -------------------------
+# Smart Prompt Engineering
+# -------------------------
+def build_prompt(user_input: str) -> str:
+    text = user_input.lower()
+
+    if "meaning" in text or "define" in text:
+        return f"Define in simple words: {user_input}"
+    elif "who is" in text:
+        return f"Answer briefly: {user_input}"
+    elif "translate" in text:
+        return f"{user_input}"
+    elif "summarize" in text or "summary" in text:
+        return f"Summarize this: {user_input}"
+    else:
+        return f"Explain clearly: {user_input}"
+
+# -------------------------
 # User Input
 # -------------------------
 user_input = st.text_input("💬 Enter your question:")
 
 if user_input:
     with st.spinner("🤔 Thinking..."):
-        # Add a task prefix so model understands
-        prompt = f"Explain in simple words: {user_input}"
+        prompt = build_prompt(user_input)
         result = generator(prompt, max_length=200, num_return_sequences=1)
         st.success(result[0]["generated_text"])
-
-
