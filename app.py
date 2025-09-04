@@ -1,21 +1,36 @@
 import streamlit as st
 from transformers import pipeline
+import nltk
+from nltk.corpus import wordnet
+
+# Download WordNet data (only first run)
+nltk.download("wordnet", quiet=True)
+nltk.download("omw-1.4", quiet=True)
 
 # -------------------------
 # Streamlit Page Config
 # -------------------------
 st.set_page_config(page_title="Mini AI Assistant", page_icon="🤖")
 st.title("🤖 Mini AI Assistant")
-st.write("Ask me anything! Powered by open-source model google/flan-t5-small.")
+st.write("Ask me anything! Powered by open-source model google/flan-t5-base + WordNet dictionary fallback.")
 
 # -------------------------
 # Load Model (once at startup)
 # -------------------------
 @st.cache_resource
 def load_model():
-    return pipeline("text2text-generation", model="google/flan-t5-small")
+    return pipeline("text2text-generation", model="google/flan-t5-base")
 
 generator = load_model()
+
+# -------------------------
+# WordNet Fallback
+# -------------------------
+def get_meaning(word: str):
+    syns = wordnet.synsets(word)
+    if syns:
+        return syns[0].definition()
+    return None
 
 # -------------------------
 # Smart Prompt Engineering
@@ -41,6 +56,21 @@ user_input = st.text_input("💬 Enter your question:")
 
 if user_input:
     with st.spinner("🤔 Thinking..."):
-        prompt = build_prompt(user_input)
-        result = generator(prompt, max_length=200, num_return_sequences=1)
-        st.success(result[0]["generated_text"])
+        # WordNet fallback for "meaning of X"
+        if "meaning of" in user_input.lower() or "define" in user_input.lower():
+            # Try to extract single word after "meaning of"
+            word = user_input.lower().replace("what is the meaning of", "").replace("meaning of", "").replace("define", "").strip()
+            meaning = get_meaning(word)
+            if meaning:
+                st.success(f"📖 Dictionary meaning of **{word}**: {meaning}")
+            else:
+                # If WordNet fails, fall back to model
+                prompt = build_prompt(user_input)
+                result = generator(prompt, max_length=200, num_return_sequences=1)
+                st.success(result[0]["generated_text"])
+        else:
+            # General case → use model
+            prompt = build_prompt(user_input)
+            result = generator(prompt, max_length=200, num_return_sequences=1)
+            st.success(result[0]["generated_text"])
+
