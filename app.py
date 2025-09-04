@@ -24,6 +24,9 @@ user_input = st.text_input("💬 Enter your question:")
 
 if user_input:
     with st.spinner("🤔 Thinking..."):
-        result = generator(user_input, max_length=200, num_return_sequences=1)
+        # Add a task prefix so model understands
+        prompt = f"Explain in simple words: {user_input}"
+        result = generator(prompt, max_length=200, num_return_sequences=1)
         st.success(result[0]["generated_text"])
+
 
