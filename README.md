@@ -1,14 +1,19 @@
+
 # 🤖 Mini AI Assistant
 
-This is a simple Streamlit-based AI Assistant built as part of the **Viswam.ai Summer of AI Internship 2025**.
+A simple yet powerful **AI Chat Assistant** built with **Streamlit** and **Hugging Face open-source models (FLAN-T5)**, enhanced with a **WordNet dictionary fallback** for accurate definitions.  
 
-## Features
-- Ask any question in natural language.
-- Uses Hugging Face API (BlenderBot model).
-- Clean and interactive UI with Streamlit.
+🚀 **Deployed App:** [Mini AI Assistant](https://9ajoernwu6sffupotsklpr.streamlit.app)  
 
-## How to Run
-1. Clone the repo:
-   ```bash
-   git clone <your-repo-link>
-   cd mini-ai-assistant
+---
+
+## ✨ Features
+- 🔹 Ask me anything in natural language.  
+- 🔹 Powered by **google/flan-t5-base** (open-source model).  
+- 🔹 **Dictionary fallback** (WordNet) for precise meanings & synonyms.  
+- 🔹 Lightweight and easy to deploy.  
+- 🔹 Runs on **Streamlit** → interactive and user-friendly.  
+
+---
+
+## 📂 Project Structure
